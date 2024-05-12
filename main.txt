@@ -1,0 +1,159 @@
+import streamlit as st
+import pandas as pd
+from openai import OpenAI
+
+# Set page configuration (must be the first Streamlit command)
+st.set_page_config(layout="wide", page_title="Chat with CSV", page_icon="📊")
+
+# Function to initialize the Llama-3.1 model for CSV interaction and generate responses using the API
+def chat_with_csv(dataframe, query, api_key):
+    try:
+        # Initialize the OpenAI client
+        client = OpenAI(
+            base_url="https://integrate.api.nvidia.com/v1",  # Correct API base URL
+            api_key=api_key  # API Key (ensure it's set correctly)
+        )
+
+        # Prepare the prompt with CSV preview and user query for interaction
+        data_preview = dataframe.head().to_string(index=False)
+        full_query = f"Answer the following question based on this data:\n\n{data_preview}\n\nQuestion: {query}"
+
+        # Send the chat completion request to OpenAI
+        completion = client.chat.completions.create(
+            model="meta/llama-3.1-405b-instruct",  # Specify the model version for interaction
+            messages=[{"role": "user", "content": full_query}],  # Use the query and preview in messages
+            temperature=0.7,
+            top_p=0.7,
+            max_tokens=150,  # Adjust max tokens if needed
+            stream=True
+        )
+
+        # Collect the response in chunks and return the result
+        response_text = ""
+        for chunk in completion:
+            if chunk.choices[0].delta.content is not None:
+                response_text += chunk.choices[0].delta.content
+        return response_text.strip()
+
+    except Exception as e:
+        return f"Error processing your query: {e}"
+
+# Function to generate Python code for the CSV tasks
+def generate_python_code(dataframe, query, api_key):
+    try:
+        # Initialize the OpenAI client for code generation
+        client = OpenAI(
+            base_url="https://integrate.api.nvidia.com/v1",  # Correct API base URL
+            api_key=api_key  # API Key (ensure it's set correctly)
+        )
+
+        # Prepare the prompt with CSV preview and user query for code generation
+        data_preview = dataframe.head().to_string(index=False)
+        full_query = f"Generate Python code to perform the following task based on this data:\n\n{data_preview}\n\nTask: {query}"
+
+        # Send the chat completion request to OpenAI
+        completion = client.chat.completions.create(
+            model="nvidia/llama-3.1-nemotron-70b-instruct",  # Specify the model version for code generation
+            messages=[{"role": "user", "content": full_query}],  # Use the query and preview in messages
+            temperature=0.7,
+            top_p=0.7,
+            max_tokens=150,  # Adjust max tokens if needed
+            stream=True
+        )
+
+        # Collect the response in chunks and return the result
+        response_text = ""
+        for chunk in completion:
+            if chunk.choices[0].delta.content is not None:
+                response_text += chunk.choices[0].delta.content
+        return response_text.strip()
+
+    except Exception as e:
+        return f"Error processing your query: {e}"
+
+# Streamlit App Setup
+st.title("📊 Chat with CSV AI")
+st.write("Upload your CSV, interact with it using AI, and generate Python code for data operations!")
+
+# Suggested Prompts for CSV Interaction
+suggested_prompts_interaction = [
+    "What are the summary statistics of the data?",
+    "What is the average of column X?",
+    "What are the unique values in column Y?",
+    "Filter rows where column Z is greater than a threshold.",
+    "How many rows are in the data?",
+    "What is the correlation between columns A and B?"
+]
+
+# Suggested Prompts for Code Generation
+suggested_prompts_code = [
+    "Generate Python code to calculate summary statistics for the data.",
+    "Generate Python code to calculate the average of column X.",
+    "Generate Python code to list all unique values in column Y.",
+    "Generate Python code to filter rows where column Z is greater than a threshold.",
+    "Generate Python code to count the number of rows in the data.",
+    "Generate Python code to create a correlation matrix for the dataset."
+]
+
+# CSV Upload Section
+uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+
+# Check if a file is uploaded
+if uploaded_file:
+    try:
+        # Try reading the CSV with a different encoding (ISO-8859-1 or latin1)
+        df = pd.read_csv(uploaded_file, encoding="ISO-8859-1")  # Try different encodings if needed
+        st.success("CSV uploaded successfully!")
+        st.dataframe(df.head(5), use_container_width=True)
+
+        # Choose between CSV Interaction or Code Generation
+        option = st.selectbox("Choose an option:", ["", "Interact with CSV", "Generate Python Code"])
+
+        if option == "Interact with CSV":
+            # Provide Suggested Prompts for CSV Interaction
+            st.write("### Suggested Prompts for CSV Interaction")
+            selected_prompt = st.selectbox("Select a prompt or enter your own question:", [""] + suggested_prompts_interaction)
+
+            # Provide a Text Area for the User's Query
+            st.write("### Ask Questions or Interact with Your Data")
+            user_query = st.text_area("Enter your question or select a prompt:", value=selected_prompt)
+
+            # Perform Interaction on Button Click
+            if st.button("Chat with CSV"):
+                if user_query:
+                    with st.spinner("Processing your query..."):
+                        api_key = "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"  # Your API key
+                        result = chat_with_csv(df, user_query, api_key)
+                    st.success("Response:")
+                    st.write(result)
+                else:
+                    st.warning("Please enter a query to analyze the data.")
+
+        elif option == "Generate Python Code":
+            # Provide Suggested Prompts for Code Generation
+            st.write("### Suggested Prompts for Code Generation")
+            selected_prompt = st.selectbox("Select a prompt or enter your own task:", [""] + suggested_prompts_code)
+
+            # Provide a Text Area for the User's Query
+            st.write("### Generate Python Code for Your Task")
+            user_query = st.text_area("Enter your task or select a prompt:", value=selected_prompt)
+
+            # Perform Code Generation on Button Click
+            if st.button("Generate Code"):
+                if user_query:
+                    with st.spinner("Generating Python code..."):
+                        api_key = "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"  # Your API key
+                        result = generate_python_code(df, user_query, api_key)
+                    st.success("Generated Python code:")
+                    st.code(result, language="python")
+                else:
+                    st.warning("Please enter a task to generate Python code.")
+
+    except Exception as e:
+        st.error(f"Failed to process the uploaded file. Error: {e}")
+else:
+    st.info("Please upload a CSV file to get started.")
+
+# Footer
+st.markdown("---")
+st.write("Powered by **Llama-3.1** and **Streamlit**. Designed for fast, seamless data interaction.")

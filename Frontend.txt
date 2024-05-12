@@ -1,0 +1,43 @@
+Frontend
+Technologies used to create the user interface and user experience:
+React.js: A popular JavaScript library for building dynamic and responsive user interfaces. It emphasizes reusable components and ensures a fast rendering process using the virtual DOM.
+Tailwind CSS: A utility-first CSS framework for designing visually appealing and highly customizable interfaces without writing custom CSS.
+Axios: A promise-based HTTP client for making API requests, used for handling data exchanges between the frontend and backend.
+Backend
+Technologies used for server-side development and APIs:
+Node.js: A runtime environment that allows developers to execute JavaScript code server-side. It's lightweight and efficient for building scalable network applications.
+Express.js: A Node.js framework that simplifies server-side application development by offering robust routing and middleware capabilities.
+Python: A versatile programming language used for developing complex server-side logic, particularly for applications requiring data analysis or machine learning.
+FastAPI: A modern Python framework for building high-performance APIs. It’s known for its fast development speed and support for asynchronous programming.
+Database
+Technologies used for storing and managing application data:
+PostgreSQL: An open-source, feature-rich relational database management system known for scalability and adherence to SQL standards.
+MongoDB: A NoSQL database that stores data in a flexible, JSON-like format, ideal for applications needing high scalability and rapid data storage.
+AI/ML
+Technologies supporting artificial intelligence and machine learning functionalities:
+OpenAI GPT: A powerful generative language model used for tasks such as natural language processing, text generation, and chatbot development.
+LangChain: A framework that helps build applications using LLMs (Large Language Models), enabling tasks like document retrieval and conversational AI.
+Pinecone: A vector database optimized for AI applications, especially for semantic search and recommendation systems.
+Scraping
+Technologies used to extract and process data from websites:
+BeautifulSoup: A Python library for parsing HTML and XML documents, used to extract structured data.
+Scrapy: A powerful Python framework for large-scale web scraping tasks, including crawling multiple pages and extracting data efficiently.
+Selenium: A tool for automating web browsers, often used for scraping dynamic content rendered by JavaScript.
+Hosting
+Platforms for deploying and hosting applications:
+AWS (Amazon Web Services): A cloud platform offering scalable hosting and other services like storage, databases, and machine learning.
+Vercel: A hosting platform optimized for frontend frameworks like React, providing fast global deployments with minimal configuration.
+Docker: A containerization platform that ensures consistency between development and production environments.
+Authentication
+Technologies for securing user data and managing access:
+JWT (JSON Web Token): A standard for securely transmitting information between parties as a JSON object, commonly used for authentication.
+OAuth 2.0: An open-standard authorization framework that enables secure access delegation, commonly used for login integrations with third-party services (e.g., Google, Facebook).
+Monitoring
+Technologies used for logging, debugging, and monitoring application health:
+ELK Stack: A set of tools (Elasticsearch, Logstash, and Kibana) used for analyzing and visualizing application logs and performance data.
+Sentry: A tool for monitoring application errors and tracking bugs in real-time, providing insights to fix issues quickly.
+Collaboration
+Tools for seamless project management and team collaboration:
+GitHub: A platform for version control and code hosting, enabling teams to collaborate on projects using Git.
+Postman: An API testing tool used to ensure seamless communication between the frontend and backend during development.
+Figma: A design tool for creating UI/UX prototypes, making it easier to visualize and collaborate on interface designs.
